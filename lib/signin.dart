@@ -33,7 +33,6 @@ class _SignInScreenState extends State<SignInScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // --- HEADER VỚI LOGO 4 HÌNH TRÒN ---
             ClipPath(
               clipper: HeaderClipper(),
               child: Container(
@@ -83,7 +82,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   const Text('Đăng nhập', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 30),
 
-                  // Ô NHẬP EMAIL
                   _buildInputField(
                     label: 'Email',
                     hint: 'Nhập email của bạn...',
@@ -93,7 +91,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     onChanged: _validateEmail,
                   ),
 
-                  // CẢNH BÁO EMAIL LỖI
                   if (_isEmailInvalid)
                     Container(
                       margin: const EdgeInsets.only(top: 8, bottom: 10),
@@ -119,7 +116,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   else
                     const SizedBox(height: 20),
 
-                  // Ô NHẬP MẬT KHẨU
                   _buildInputField(
                     label: 'Mật khẩu',
                     hint: 'Nhập mật khẩu...',
@@ -130,13 +126,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
                   const SizedBox(height: 40),
 
-                  // NÚT ĐĂNG NHẬP
                   SizedBox(
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Logic đăng nhập
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0D6EFD),
@@ -148,7 +142,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
                   const SizedBox(height: 25),
 
-                  // CHUYỂN SANG TRANG ĐĂNG KÝ
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -177,7 +170,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  // Widget ô nhập liệu dùng chung
   Widget _buildInputField({
     required String label,
     required String hint,
@@ -216,7 +208,6 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 }
 
-// CLIPPER TẠO ĐƯỜNG CONG HEADER
 class HeaderClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

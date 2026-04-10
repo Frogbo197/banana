@@ -79,7 +79,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const Text('Đăng ký', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 30),
 
-                  // 2. Ô Email
                   _buildInputField(
                     label: 'Email',
                     hint: 'Nhập email....',
@@ -89,7 +88,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onChanged: _validateEmail,
                   ),
 
-                  // 3. Cảnh báo lỗi Email
                   if (_isEmailInvalid)
                     Container(
                       margin: const EdgeInsets.only(top: 8, bottom: 15),
@@ -128,7 +126,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   const SizedBox(height: 30),
 
-                  // 4. Nút Đăng ký
                   SizedBox(
                     width: double.infinity,
                     height: 55,
@@ -146,14 +143,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   const SizedBox(height: 25),
 
-                  // 5. Dòng Đăng nhập ngay
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text('Đã có tài khoản? ', style: TextStyle(color: Colors.grey)),
                       GestureDetector(
                         onTap: () {
-                          // Quay lại trang Đăng nhập
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => const SignInScreen()),
