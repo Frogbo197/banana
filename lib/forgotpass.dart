@@ -1,118 +1,87 @@
 import 'package:flutter/material.dart';
-import 'otpdialog.dart';
-class ForgotPasswordScreen extends StatelessWidget {
+
+class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
+
+  @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  void _resetPassword() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 2)); // giả lập API
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Đã gửi link reset về email!"),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+      appBar: AppBar(
+        title: const Text("Quên mật khẩu"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back button
-              CircleAvatar(
-                backgroundColor: Colors.white,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
+              const Text(
+                "Nhập email để lấy lại mật khẩu",
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: "Email",
+                  border: OutlineInputBorder(),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Nhập email đi bro";
+                  }
+                  if (!value.contains("@")) {
+                    return "Email không hợp lệ";
+                  }
+                  return null;
+                },
               ),
 
               const SizedBox(height: 20),
 
-              const Text(
-                "Quên mật khẩu",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              const Text(
-                "Chọn thông tin liên hệ nơi bạn muốn đặt lại mật khẩu của mình.",
-                style: TextStyle(color: Colors.grey),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Option 1
-              _optionCard(
-                title: "Mật khẩu",
-                isSelected: true,
-              ),
-
-              const SizedBox(height: 16),
-
-              // Option 2
-              _optionCard(
-                title: "Trình xác thực Google",
-                isSelected: false,
-              ),
-
-              const Spacer(),
-
-              // Button
               SizedBox(
                 width: double.infinity,
-                height: 55,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const (),
-                    );
-                  },
-                  child: const Text(
-                    "Gửi mật khẩu 🔒",
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  onPressed: _isLoading ? null : _resetPassword,
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Gửi yêu cầu"),
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _optionCard({required String title, required bool isSelected}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isSelected ? Colors.blue : Colors.transparent,
-          width: 2,
-        ),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundColor: Colors.grey[200],
-          ),
-          const SizedBox(width: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
       ),
     );
   }
