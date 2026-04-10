@@ -1,0 +1,43 @@
+name: salud_tlsk_ai
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.7
+
+# Cấu hình Splash Screen (Nằm sát lề trái, không thụt lề)
+flutter_native_splash:
+  color: "#FFF5E1"
+  image: assets/logo2.png
+
+  # Giúp logo nằm giữa và không bị hệ thống tự ý cắt tỉa
+  android_gravity: center
+  ios_content_mode: center
+
+  # Nếu muốn logo to hơn nữa, bạn có thể chỉnh thông số này (mặc định là 240)
+  # image_width: 480
+
+  fullscreen: true
+
+  android_12:
+    image: assets/logo2.png
+    color: "#FFF5E1"
+    icon_background_color: "#FFF5E1"
+
+# Cấu hình tài nguyên Flutter
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo2.png
