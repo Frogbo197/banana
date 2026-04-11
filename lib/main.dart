@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// Đảm bảo tên file này trùng với tên file bạn đã tạo trong thư mục lib
-import 'package:salud_tlsk_ai/signin.dart';
-import 'package:salud_tlsk_ai/register.dart';
-void main() {
+import 'package:salud_tlsk_ai/splash.dart'; // 👈 thêm dòng này
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -12,13 +14,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Tắt nhãn Debug cho đẹp
+      debugShowCheckedModeBanner: false,
       title: 'Salud AI',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0D6EFD)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF0D6EFD),
+        ),
         useMaterial3: true,
       ),
-      home: const SignInScreen(),
+      home: const SplashScreen(), // 👈 đổi ở đây
     );
   }
 }
