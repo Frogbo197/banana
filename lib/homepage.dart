@@ -23,8 +23,7 @@ class _HomepageState extends State<Homepage> {
         title: const Text("Trang chủ"),
       ),
       body: Center(
-        child: Text(
-          user?.email ?? "Không có user",
+        child: Text(user?.email ?? "Không có user",
           style: const TextStyle(fontSize: 16),
         ),
       ),

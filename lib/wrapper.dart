@@ -17,20 +17,17 @@ class _WrapperState extends State<Wrapper> {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
 
-        // loading
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-
-        // đã đăng nhập
         if (snapshot.hasData) {
           return const Homepage();
         }
-
-        // chưa đăng nhập
-        return const SignIn();
+        else {
+          return const SignIn();
+        }
       },
     );
   }

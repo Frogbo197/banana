@@ -15,6 +15,8 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Wrapper()),
@@ -31,7 +33,6 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
 
-            /// 🐶 LOGO
             Container(
               width: 120,
               height: 120,
@@ -46,7 +47,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
             const SizedBox(height: 20),
 
-            /// TEXT
             const Text(
               "salud.ai",
               style: TextStyle(

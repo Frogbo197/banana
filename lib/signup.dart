@@ -1,20 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _obscureConfirm = true;
   bool _isLoading = false;
 
   String? _validateEmail(String? value) {
@@ -32,37 +34,60 @@ class _SignInState extends State<SignIn> {
     return null;
   }
 
-  Future<void> _login() async {
+  String? _validateConfirmPassword(String? value) {
+    if (value != _passwordController.text) {
+      return "Mật khẩu không khớp";
+    }
+    return null;
+  }
+
+  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-    } on FirebaseAuthException catch (e) {
-      String message = "Đăng nhập thất bại";
 
-      if (e.code == 'user-not-found') {
-        message = "Email không tồn tại";
-      } else if (e.code == 'wrong-password') {
-        message = "Sai mật khẩu";
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đăng ký thành công")),
+      );
+
+      Navigator.pop(context);
+
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      String message = "Đăng ký thất bại";
+
+      if (e.code == 'email-already-in-use') {
+        message = "Email đã tồn tại";
       } else if (e.code == 'invalid-email') {
         message = "Email không hợp lệ";
+      } else if (e.code == 'weak-password') {
+        message = "Mật khẩu quá yếu";
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
+
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Lỗi: $e")),
       );
     }
 
-    setState(() => _isLoading = false);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -80,7 +105,7 @@ class _SignInState extends State<SignIn> {
                 width: double.infinity,
                 color: const Color(0xFF89B0E5),
                 child: const Center(
-                  child: Icon(Icons.blur_on,
+                  child: Icon(Icons.person_add,
                       color: Colors.white, size: 40),
                 ),
               ),
@@ -93,10 +118,11 @@ class _SignInState extends State<SignIn> {
                 child: Column(
                   children: [
                     const Text(
-                      'Đăng nhập',
+                      'Đăng ký',
                       style: TextStyle(
                           fontSize: 32, fontWeight: FontWeight.bold),
                     ),
+
                     const SizedBox(height: 30),
 
                     TextFormField(
@@ -104,13 +130,11 @@ class _SignInState extends State<SignIn> {
                       validator: _validateEmail,
                       decoration: InputDecoration(
                         hintText: "Nhập email...",
-                        prefixIcon:
-                        const Icon(Icons.email_outlined),
+                        prefixIcon: const Icon(Icons.email_outlined),
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
@@ -123,24 +147,48 @@ class _SignInState extends State<SignIn> {
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: "Nhập mật khẩu...",
-                        prefixIcon:
-                        const Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(_obscurePassword
                               ? Icons.visibility_off
                               : Icons.visibility),
                           onPressed: () {
                             setState(() {
-                              _obscurePassword =
-                              !_obscurePassword;
+                              _obscurePassword = !_obscurePassword;
                             });
                           },
                         ),
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      validator: _validateConfirmPassword,
+                      obscureText: _obscureConfirm,
+                      decoration: InputDecoration(
+                        hintText: "Nhập lại mật khẩu...",
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(_obscureConfirm
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: () {
+                            setState(() {
+                              _obscureConfirm = !_obscureConfirm;
+                            });
+                          },
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
@@ -151,13 +199,11 @@ class _SignInState extends State<SignIn> {
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _login,
+                        onPressed: _isLoading ? null : _register,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                          const Color(0xFF0D6EFD),
+                          backgroundColor: const Color(0xFF0D6EFD),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                         child: _isLoading
@@ -165,7 +211,7 @@ class _SignInState extends State<SignIn> {
                           color: Colors.white,
                         )
                             : const Text(
-                          'Đăng nhập',
+                          'Đăng ký',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 18),
@@ -174,41 +220,14 @@ class _SignInState extends State<SignIn> {
                     ),
 
                     const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                    GestureDetector(
-                      onTap: () async {
-                        if (_emailController.text.isEmpty) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(
-                            const SnackBar(
-                                content: Text(
-                                    "Nhập email trước")),
-                          );
-                          return;
-                        }
-
-                        await FirebaseAuth.instance
-                            .sendPasswordResetEmail(
-                            email: _emailController.text
-                                .trim());
-
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  "Đã gửi email reset")),
-                        );
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context); // quay về login
                       },
-                      child: const Text(
-                        "Quên mật khẩu",
-                        style: TextStyle(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: const Text("Đã có tài khoản? Đăng nhập"),
                     ),
-
-                    const SizedBox(height: 30),
                   ],
                 ),
               ),

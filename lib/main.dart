@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:salud_tlsk_ai/splash.dart'; // 👈 thêm dòng này
+import 'package:salud_tlsk_ai/splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const SplashScreen(), // 👈 đổi ở đây
+      home: const SplashScreen(),
     );
   }
 }
