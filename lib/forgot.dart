@@ -24,10 +24,16 @@ class _ForgotState extends State<Forgot> {
         email: _emailController.text.trim(),
       );
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Đã gửi email reset mật khẩu")),
+        const SnackBar(content: Text("Đã gửi email reset")),
       );
+
+      Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Lỗi: $e")),
       );
@@ -37,59 +43,48 @@ class _ForgotState extends State<Forgot> {
   }
 
   String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Nhập email đi bro";
-    }
-    if (!value.contains("@")) {
-      return "Email sai định dạng";
-    }
+    if (value == null || value.isEmpty) return "Nhập email";
+    if (!value.contains("@")) return "Sai email";
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F4F8),
-      body: Padding(
-        padding: const EdgeInsets.all(25),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
 
-              const Text(
-                'Quên mật khẩu',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
+                const Text(
+                  "Quên mật khẩu",
+                  style: TextStyle(fontSize: 24),
+                ),
 
-              const SizedBox(height: 30),
+                const SizedBox(height: 20),
 
-              TextFormField(
-                controller: _emailController,
-                validator: _validateEmail,
-                decoration: InputDecoration(
-                  hintText: "Nhập email...",
-                  prefixIcon: const Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                TextFormField(
+                  controller: _emailController,
+                  validator: _validateEmail,
+                  decoration: const InputDecoration(
+                    hintText: "Nhập email",
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 30),
+                const SizedBox(height: 20),
 
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
+                ElevatedButton(
                   onPressed: _isLoading ? null : resetPassword,
                   child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Gửi link reset"),
+                      ? const CircularProgressIndicator()
+                      : const Text("Gửi"),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
