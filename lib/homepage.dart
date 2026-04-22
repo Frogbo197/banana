@@ -17,14 +17,51 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    if (user != null && !user!.emailVerified) {
+      Future.microtask(() {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Bạn chưa xác nhận email"),
+          ),
+        );
+      });
+    }
+  }
+
+  Future<void> resendVerify() async {
+    await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Đã gửi lại email xác nhận")),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Trang chủ"),
       ),
       body: Center(
-        child: Text(user?.email ?? "Không có user",
-          style: const TextStyle(fontSize: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+
+            Text(
+              user?.email ?? "Không có user",
+              style: const TextStyle(fontSize: 16),
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: resendVerify,
+              child: const Text("Gửi lại email xác nhận"),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

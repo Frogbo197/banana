@@ -12,19 +12,16 @@ class Wrapper extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
 
-        // loading
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        // đã login
         if (snapshot.hasData) {
           return const Homepage();
         }
 
-        // chưa login
         return const Signin();
       },
     );
