@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salud_tlsk_ai/wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -7,7 +8,6 @@ class SplashScreen extends StatefulWidget {
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
-
 class _SplashScreenState extends State<SplashScreen> {
   final PageController _controller = PageController();
   int currentIndex = 0;
@@ -50,8 +50,13 @@ class _SplashScreenState extends State<SplashScreen> {
     },
   ];
 
-  void nextPage() {
+  void nextPage() async {
     if (currentIndex == data.length - 1) {
+
+      await FirebaseAuth.instance.signOut(); // 🔥 thêm ở đây
+
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Wrapper()),
@@ -71,7 +76,6 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         children: [
 
-          /// 🟢 PAGEVIEW
           PageView.builder(
             controller: _controller,
             itemCount: data.length,
@@ -86,7 +90,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Column(
                   children: [
 
-                    /// CENTER
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -129,7 +132,6 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ),
 
-                    /// BOTTOM
                     Padding(
                       padding: const EdgeInsets.only(bottom: 40),
                       child: Column(
@@ -178,7 +180,6 @@ class _SplashScreenState extends State<SplashScreen> {
             },
           ),
 
-          /// 🔴 NÚT BỎ QUA
           if (currentIndex != data.length - 1)
             Positioned(
               top: 50,

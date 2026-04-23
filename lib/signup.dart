@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:salud_tlsk_ai/onboarding.dart';
 import 'package:salud_tlsk_ai/wrapper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -32,11 +34,22 @@ class _SignupState extends State<Signup> {
         password: _passwordController.text.trim(),
       );
 
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('doneOnboarding', false);
+
       if (!mounted) return;
 
-      Get.offAll(() => const Wrapper()); // 🔥 chuyển luôn
+      setState(() => _isLoading = false);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Wrapper()),
+      );
+
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
+
+      setState(() => _isLoading = false);
 
       String message = "Đăng ký thất bại";
 
@@ -51,14 +64,20 @@ class _SignupState extends State<Signup> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
-    }
+    } catch (e) {
+      if (!mounted) return;
 
-    setState(() => _isLoading = false);
+      setState(() => _isLoading = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lỗi: $e")),
+      );
+    }
   }
 
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) return "Nhập email";
-    if (!value.contains("@")) return "Địa chỉ email không hợp lệ!";
+    if (!value.contains("@")) return "Email không hợp lệ";
     return null;
   }
 
@@ -80,6 +99,7 @@ class _SignupState extends State<Signup> {
         child: Column(
           children: [
 
+            /// HEADER
             Container(
               height: 200,
               decoration: const BoxDecoration(
@@ -93,6 +113,7 @@ class _SignupState extends State<Signup> {
               ),
             ),
 
+            /// FORM
             Padding(
               padding: const EdgeInsets.all(25),
               child: Form(
@@ -102,12 +123,15 @@ class _SignupState extends State<Signup> {
 
                     const Text(
                       "Đăng ký",
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
 
                     const SizedBox(height: 30),
 
-
+                    /// EMAIL
                     TextFormField(
                       controller: _emailController,
                       validator: validateEmail,
@@ -124,6 +148,7 @@ class _SignupState extends State<Signup> {
 
                     const SizedBox(height: 15),
 
+                    /// PASSWORD
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscure,
@@ -148,6 +173,7 @@ class _SignupState extends State<Signup> {
 
                     const SizedBox(height: 15),
 
+                    /// CONFIRM
                     TextFormField(
                       controller: _confirmController,
                       obscureText: _obscureConfirm,
@@ -169,8 +195,10 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 30),
 
+                    /// BUTTON
                     SizedBox(
                       width: double.infinity,
                       height: 55,
@@ -184,7 +212,8 @@ class _SignupState extends State<Signup> {
                           elevation: 5,
                         ),
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(
+                            color: Colors.white)
                             : const Text(
                           "Đăng ký",
                           style: TextStyle(
@@ -194,8 +223,10 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 20),
 
+                    /// LOGIN LINK
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
