@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:salud_tlsk_ai/api_service.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -10,7 +11,23 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
 
+  List users = [];
+  bool loading = true;
+
   final user = FirebaseAuth.instance.currentUser;
+  @override
+  void initState() {
+    super.initState();
+    loadUsers();
+  }
+
+  void loadUsers() async {
+    final data = await ApiService.getUsers();
+    setState(() {
+      users = data;
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
